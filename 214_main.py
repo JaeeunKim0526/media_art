@@ -7,13 +7,14 @@ import time
 
 
 # --- Configuration ---
-SERIAL_PORT = "/dev/ttyACM0"  # Replace with your Arduino's serial port
+SERIAL_PORT = "COM3"  # Replace with your Arduino's serial port
 BAUD_RATE = 9600  # Match your Arduino's baud rate
 VIDEO_FOLDER = "videos"  # Replace with the actual path
 VIDEO_EXTENSIONS = [".mp4", ".mov", ".avi"]  # Add other extensions if needed
 MUSIC_NAME = "alone.mp3" # Change to your music's name
 
 music_process = None
+previous_state = "0"
 
 def play_music(music_path):
     global music_process  # Access the global variable
@@ -83,8 +84,8 @@ def play_random_videos(directory):
             if cv2.waitKey(25) & 0xFF == ord('q'): # Press 'q' to quit the current video
                 break
 
-            cap.release()
-            cv2.destroyAllWindows()  # Close the window after the video finishes or 'q' is pressed
+        cap.release()
+        cv2.destroyAllWindows()  # Close the window after the video finishes or 'q' is pressed
 
     except FileNotFoundError:
         print(f"Directory not found: {directory}")
@@ -96,11 +97,9 @@ if __name__ == "__main__":
     while True:
         try:
             line = arduino.readline().decode("utf-8").rstrip()  # Read from serial
+            print(line)
 
-            if line == "1" and previous_state == "0":
-                play_music(MUSIC_NAME)
-
-            if line == "1": # Object detected (rising edge)
+            if line == "1" and previous_state == "0": # Object detected (rising edge)
                 print("Object detected!")
                 play_random_videos(VIDEO_FOLDER)
                 previous_state = "1"  # Update state to avoid immediate re-triggering
@@ -108,7 +107,7 @@ if __name__ == "__main__":
                 break
 
             elif line == "0": # Object no longer detected
-                stop_music()
+                #stop_music()
                 cv2.destroyAllWindows()
                 previous_state = "0"
 
