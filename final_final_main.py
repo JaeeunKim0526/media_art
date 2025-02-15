@@ -19,7 +19,6 @@ HEIGHT = 2160
 COLOR = (0, 0, 0) # Black
 
 previous_state = "0"
-p = None
 
 try:
     arduino = serial.Serial(SERIAL_PORT, BAUD_RATE)
@@ -64,7 +63,7 @@ def serial_signal():
     
     return line
 
-def play_video():
+def play_video(p):
     random.shuffle(video_path)
     cap = cv2.VideoCapture(video_path[0])
 
@@ -103,6 +102,7 @@ def play_video():
  
 ### MAIN ###
 if __name__ == "__main__":
+    p = None
     while True:
         detection = serial_signal()
  
@@ -111,7 +111,7 @@ if __name__ == "__main__":
                 if p is None:
                     p = multiprocessing.Process(target=playsound, args=(MUSIC_NAME,))
                     p.start()
-            play_video()
+            play_video(p)
             previous_state = "1"
             arduino.reset_input_buffer()  # Clear any remaining input
             time.sleep(1)  # Pause for 1 second (adjust as needed)
