@@ -84,6 +84,7 @@ def play_video():
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 break
         else:
+            cv2.destroyAllWindows()
             break
     
     cv2.destroyAllWindows()
@@ -94,10 +95,10 @@ if __name__ == "__main__":
         detection = serial_signal()
  
         if detection == "1":
-            play_video()
             if previous_state == "0":
                 p.start()
-                previous_state = "1"
+            play_video()
+            previous_state = "1"
             arduino.reset_input_buffer()  # Clear any remaining input
             time.sleep(1)  # Pause for 1 second (adjust as needed)
         else:
