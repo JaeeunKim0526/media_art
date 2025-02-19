@@ -139,7 +139,8 @@ if __name__ == "__main__":
             arduino.reset_input_buffer()  # Clear any remaining input
             time.sleep(1)  # Pause for 1 second (adjust as needed)
         else:
-            play_blank()
+            #play_blank()
+            cv2.destroyAllWindows()
             if previous_state == "1":
                 if p is not None:
                     p.terminate()
