@@ -63,32 +63,31 @@ def play_video(p):
 
     cap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)  # Seek to the random frame
 
-    while True:
+    while(cap.isOpened()):
         ret, frame = cap.read()
-        if not ret:  # Check if a frame was successfully read
-            break
+        if ret == True:  # Check if a frame was successfully read
+            cv2.namedWindow("window", cv2.WND_PROP_FULLSCREEN)
+            cv2.setWindowProperty("window",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)
+            cv2.imshow('window', frame)
 
-        cv2.imshow("Video", frame)  # Display the frame
-        if cv2.waitKey(25) & 0xFF == ord('q'):  # Exit on 'q' press
-            break
-
-    cap.release()
-    cv2.destroyAllWindows()
-
+            if cv2.waitKey(25) & 0xFF == ord('q'):  # Exit on 'q' press
+                break
         
-    detection = serial_signal()
+            detection = serial_signal()
 
-    if detection == "0":
-        cap.release()  # Stop the video
-        cv2.destroyAllWindows() # Close the window
-        if p is not None:
-            p.terminate()
-            p.join()
-            p = None
-        return  # Exit the video playing function
-    else:
-        cv2.destroyAllWindows()
-    
+            if detection == "0":
+                cap.release()  # Stop the video
+                cv2.destroyAllWindows() # Close the window
+                if p is not None:
+                    p.terminate()
+                    p.join()
+                    p = None
+                return  # Exit the video playing function
+            
+        else:
+            cv2.destroyAllWindows()
+            break
+        
     cv2.destroyAllWindows()
  
 def play_blank():
