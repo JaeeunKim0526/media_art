@@ -11,7 +11,7 @@ from playsound import playsound
 # --- Configuration ---
 SERIAL_PORT = "COM3"  # Replace with your Arduino's serial port
 BAUD_RATE = 9600  # Match your Arduino's baud rate
-VIDEO_FOLDER = "videos"  # Replace with the actual path
+VIDEO_NAME = "videos"  # Replace with the actual path
 VIDEO_EXTENSIONS = [".mp4", ".mov", ".avi"]  # Add other extensions if needed
 BLANK_VIDEO = "black_footage.mp4"
 MUSIC_NAME = "alone.mp3" # Change to your music's name
@@ -27,21 +27,6 @@ try:
 except serial.SerialException as e:
     print(f"Error connecting to Arduino: {e}")
     exit()
-
-video_files = [
-            f for f in os.listdir(VIDEO_FOLDER)
-            if os.path.isfile(os.path.join(VIDEO_FOLDER, f)) and
-               f.lower().endswith(('.mp4', '.avi', '.mov', '.mkv'))  # Add more extensions if needed
-        ]
-
-#print(video_files)
-
-video_path = []
-
-for video_file in video_files:
-            video_path.append(os.path.join(VIDEO_FOLDER, video_file))
-    
-#print(video_path)
 
 image = np.zeros((HEIGHT, WIDTH, 3), np.uint8)
 image[:] = COLOR
@@ -64,11 +49,11 @@ def serial_signal():
     return line
 
 def play_video(p):
-    cap = cv2.VideoCapture(video_path)
+    cap = cv2.VideoCapture(VIDEO_NAME)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
     if not cap.isOpened():
-                print(f"Error opening video: {video_path}")
+                print(f"Error opening video: {VIDEO_NAME}")
 
     if total_frames <= 0:  # Handle cases where frame count is unavailable
             print("Warning: Could not determine total frame count. Playing from beginning.")
@@ -110,7 +95,7 @@ def play_blank():
     cap = cv2.VideoCapture(BLANK_VIDEO)
 
     if not cap.isOpened():
-                print(f"Error opening video: {video_path}")
+                print(f"Error opening video: {VIDEO_NAME}")
 
     while(cap.isOpened()):
     # Capture frame-by-frame
@@ -141,7 +126,6 @@ def play_blank():
 
 ### MAIN ###
 if __name__ == "__main__":
-    frame_n = get_frame_count()
     p = None
     while True:
         detection = serial_signal()
